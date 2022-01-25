@@ -1,0 +1,183 @@
+---
+title: "FAD and Family Focus Project"
+output: html_document
+---
+
+## Objective
+
+In this article I will walk through the steps I took to clean and visualize data from the Family Assessment Device, a standardized assessments issued to clients and parents of Elements Wilderness Therapy Program to measure family functioning.  The company wanted to know two key things:  
+* What did general trends for the FAD survey look like
+* Did a client participating in an immersive family therapy session (Family Focus) significantly impact FAD scores on average?
+
+
+Note: This article does not include cleaning scripts.  These scripts are available on github and will be referenced by name throughout.
+
+
+```{r setup}
+library(tidyverse)
+library(patchwork)
+library(rstatix)
+library(knitr)
+
+# Set wd to parent folder to ensure condidentiality of rds files
+knitr::opts_knit$set(root.dir = 'C:/Users/cullo/OneDrive/Desktop/One Cloud/Resume 2022/Github Portfolio/' )
+
+```
+
+## Consent Data  
+
+Information related to whether or not a client consented to thier data being used was recorded on a separate survey.  Thus it was important to merge and clean the consent files in order to join them to each individual survey.
+
+```{r consent}
+# Read in rds file with aggregrated consent data from consent_clean_PUBLIC.R
+consent <- readRDS("rds/consent master list.rds")
+# Rename "clientName" to ensure merge is correct
+consent <- consent %>% rename(clientName_con = clientName)
+```
+
+
+## FAD
+
+```{r fad}
+# Input FAD dataset with imputed values
+# Cleaning file - FAD clean_PUBLIC.R
+# Imputation file - imputation_FAD_PUBLIC.R
+fad_org <- readRDS("rds/fad_imput_full.rds")
+
+
+# Merge consent data
+fad_con <- merge(fad_org, consent, by = (c("otClientId", "assignedToRelationship")))
+
+# Remove cases that declined consent and extra name column and change score col to fad
+fad <- fad_con %>% 
+  filter(consent == "Consent") %>% 
+  select(-clientName_con) %>% 
+  rename(fad = score)
+
+```
+
+
+```{r fad plot}
+# Create table for use in legend
+fad_table <- fad %>% filter(instance == "DOA") %>% group_by(surveyID) %>% tally()
+
+# Rename instances for clarity on graph
+fad <- fad %>% mutate(instance_rename = case_when(
+  instance == "DOA" ~ "Admission",
+  instance == "DOD" ~ "Discharge", 
+  instance == "MO6" ~ "6 Months Post",
+  instance == "YR1" ~ "1 Year Post"))
+fad$instance_rename <- factor(fad$instance_rename, levels = c("Admission", "Discharge", "6 Months Post", "1 Year Post"))
+
+# Plot of overall FAD scores
+fad.overall.plot <- fad %>% ggplot(aes(color = surveyID)) + 
+  stat_summary(aes(x=instance_rename, y=fad), 
+               fun = mean, geom = "point") +
+  stat_summary(aes(x=instance_rename, y=fad, 
+                   group = surveyID), 
+               fun = mean, geom = "line") +
+  #labs(title = "Overall FAD Scores", subtitle = "How does EWP impact perceptions of family dynamics?")+
+  coord_cartesian(ylim = c(1.8,2.35))+
+  scale_color_discrete(labels = paste(fad_table$surveyID, fad_table$n, sep = " = "))+
+  theme_minimal() +
+  geom_hline(aes(yintercept = 2, 
+                 linetype = "Clinical Cutoff"
+                 )) +
+  scale_linetype_manual(name = "",
+                        values = c("Clinical Cutoff" = "dashed")) +
+  theme(legend.position = c(1,1), legend.justification = c(1,1))+
+  xlab("Time") + ylab("FAD Score")+
+  labs(title = "Overall FAD Scores",
+       subtitle = "Measure of Family Functioning") +
+  theme(text = element_text(size = 15)) +
+  labs(color = "")
+
+fad.overall.plot
+
+# save as jpg
+ggsave("FAD_Outcomes/fig/fad_overall_plot.jpg", fad.overall.plot, width = 10, height = 7)
+
+```
+
+## Family Focus Integration
+
+The client wanted to know how participation in Family Focus impacted the results of these two outcome surveys.  First, I cleaned the data which individual participated in Family Focus (family focus CLEAN_public.R).  Then I joined this data set to both the yoq and fad datasets (shown below).  Next, I produced plots for both measures broken out by Family Focus status.
+
+```{r family focus merge}
+
+# Import family focus (ff) data and master list of names of clients
+ff_clients <- readRDS("rds/family focus clients.rds")   # 276
+
+# JOIN TO FAD 
+fad <- left_join(fad, ff_clients, by = c("clientName", "otClientId"))
+# Edit ff column to be Yes/No
+fad[,"ff"][is.na(fad[,"ff"])] <- "No"
+fad <- fad[!duplicated(fad[1:13]),]
+
+```
+
+```{r fad by family focus plots}
+## table for legend
+no.ff.tally <- fad %>% 
+  group_by(surveyID, ff) %>% 
+  filter(ff == "No") %>% 
+  filter(instance == "DOA") %>% tally()
+# fad plot of no family focus clients
+no.ff <- fad %>% filter(ff == "No") %>% 
+  ggplot(aes(color = surveyID)) + 
+  stat_summary(aes(x=instance, y=fad), fun = mean, geom = "point") +
+  stat_summary(aes(x=instance, y=fad, group = surveyID), fun = mean, geom = "line") +
+  geom_abline(intercept = 2, slope = 0, linetype = "dashed") +
+  labs(title = "No Family Focus")+
+  coord_cartesian(ylim = c(1.75,2.3))+
+  scale_color_discrete(labels=paste(no.ff.tally$surveyID, no.ff.tally$n, sep = " = ")) +
+  theme_minimal() + 
+  theme(legend.position = c(1,1), legend.justification = c(1,1))
+
+
+# fad table with family focus
+yes.ff.tally <- fad %>% 
+  group_by(surveyID, ff) %>% 
+  filter(ff == "Yes") %>% 
+  filter(instance == "DOA") %>% tally()
+
+# fad plot with family focus
+yes.ff <- fad %>% filter(ff == "Yes") %>% 
+  ggplot(aes(color = surveyID)) + 
+  stat_summary(aes(x=instance, y=fad), fun = mean, geom = "point") +
+  stat_summary(aes(x=instance, y=fad, group = surveyID), fun = mean, geom = "line") +
+  geom_abline(intercept = 2, slope = 0, linetype = "dashed") +
+  labs(title = "With Family Focus")+
+  coord_cartesian(ylim = c(1.75,2.3))+
+  scale_color_discrete(labels=paste(yes.ff.tally$surveyID, yes.ff.tally$n, sep = " = ")) +
+  theme_minimal() +
+  theme(legend.position = c(1,1), legend.justification = c(1,1))
+
+# Family Assessment Device, family focus vs none plots, 
+ff.dif <- no.ff + yes.ff
+ff.dif
+
+ggsave("FAD_Outcomes/fig/fad_by_family_focus.jpg", ff.dif, width = 10, height = 7)
+
+
+```
+
+
+```{r fad by family focus plots}
+# Check for statistical difference between ff and no ff
+fad_ttest <- fad %>% 
+  group_by(instance, surveyID) %>% 
+  t_test(fad ~ ff) %>%
+  adjust_pvalue(method = "BH") %>% 
+  add_significance()
+
+```
+
+Participation in a family focus was not shown to impact the scores of individuals at any time point in a statistically significant way.  
+
+
+
+
+
+
+
