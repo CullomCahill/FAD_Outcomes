@@ -129,7 +129,7 @@ no.ff <- fad %>% filter(ff == "No") %>%
   stat_summary(aes(x=instance, y=fad, group = surveyID), fun = mean, geom = "line") +
   geom_abline(intercept = 2, slope = 0, linetype = "dashed") +
   labs(title = "No Family Focus")+
-  coord_cartesian(ylim = c(1.75,2.3))+
+  coord_cartesian(ylim = c(1.85,2.35))+
   scale_color_discrete(labels=paste(no.ff.tally$surveyID, no.ff.tally$n, sep = " = ")) +
   theme_minimal() + 
   theme(legend.position = c(1,1), legend.justification = c(1,1))
@@ -148,7 +148,7 @@ yes.ff <- fad %>% filter(ff == "Yes") %>%
   stat_summary(aes(x=instance, y=fad, group = surveyID), fun = mean, geom = "line") +
   geom_abline(intercept = 2, slope = 0, linetype = "dashed") +
   labs(title = "With Family Focus")+
-  coord_cartesian(ylim = c(1.75,2.3))+
+  coord_cartesian(ylim = c(1.85,2.35))+
   scale_color_discrete(labels=paste(yes.ff.tally$surveyID, yes.ff.tally$n, sep = " = ")) +
   theme_minimal() +
   theme(legend.position = c(1,1), legend.justification = c(1,1))
@@ -157,7 +157,7 @@ yes.ff <- fad %>% filter(ff == "Yes") %>%
 ff.dif <- no.ff + yes.ff
 ff.dif
 
-ggsave("FAD_Outcomes/fig/fad_by_family_focus.jpg", ff.dif, width = 10, height = 7)
+ggsave("FAD_Outcomes/fig/fad_by_family_focus1.jpg", ff.dif, width = 10, height = 7)
 
 
 ```
