@@ -1,7 +1,7 @@
 # Family Assessment Device Analysis
 How did family functioning change as a result of treatment?  Did families who participated in a Family Focus see greater results?
 
-![](fig/fad_by_family_focus.jpg)
+![](fig/fad_by_family_focus1.jpg)
 
 It is very common for parents to choose to send their child to an Outdoor Behavioral Healthcare (OBH) program when their child’s struggles have resulted in poor family communication and overall functioning.  
 
@@ -37,4 +37,4 @@ Detailed results in [**FAD and Family Focus_PUB.Rmd**](https://github.com/Cullom
 <br>  
 <br>  
 
-![](fig/fad_by_family_focus.jpg)
+![](fig/fad_by_family_focus1.jpg)
