@@ -19,14 +19,14 @@ I cleaned, aggregated, and ran analysis on years of family functioning data to p
 Data had to be aggregated and cleaned from several several different sources for this project:
 * **FAD** completed by both parents and adolescents
 * **Data use consent** held in 4 different data sets
-* **Family Focus dataset** containing information on individuals who attended an immersive family therapy session.
+* **Family Workshop dataset** containing information on individuals who attended an immersive family therapy session.
 
 ## 3. Data Preparation
 
 * In order to perform analysis, raw FAD data had to be cleaned (see [**FAD clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/FAD%20clean_PUB.R)).  
 * The consent files had to be merged together and joined to the overall FAD dataset and the non-consenting cases removed (see [**Consent clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Consent_clean_PUB.R)).  
 * Due to the limited number of complete cases with data at each of the four timepoints, missing cases were predicted using imputation via linear regression for cases that had data available for both intake and discharge as well as either six months or one year post-discharge (see [**Imputation_FAD_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Imputation_FAD_PUB.R)).
-* Family Focus data had to be gathered and cleaned (see [**Family Focus_clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Family%20Focus_clean_PUB.R))
+* Family Workshop data had to be gathered and cleaned (see [**Family Focus_clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Family%20Focus_clean_PUB.R))
 
 ## 4. Results
 
