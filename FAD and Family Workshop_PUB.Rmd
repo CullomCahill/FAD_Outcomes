@@ -1,5 +1,5 @@
 ---
-title: "FAD and Family Focus Project"
+title: "FAD and Family Workshop Project"
 output: html_document
 ---
 
@@ -7,7 +7,7 @@ output: html_document
 
 In this article I will walk through the steps I took to clean and visualize data from the Family Assessment Device, a standardized assessments issued to clients and parents of Elements Wilderness Therapy Program to measure family functioning.  The company wanted to know two key things:  
 * What did general trends for the FAD survey look like
-* Did a client participating in an immersive family therapy session (Family Focus) significantly impact FAD scores on average?
+* Did a client participating in an immersive family therapy session (Family Workshop) significantly impact FAD scores on average?
 
 
 Note: This article does not include cleaning scripts.  These scripts are available on github and will be referenced by name throughout.
@@ -99,14 +99,14 @@ ggsave("FAD_Outcomes/fig/fad_overall_plot.jpg", fad.overall.plot, width = 10, he
 
 ```
 
-## Family Focus Integration
+## Family Workshop Integration
 
-The client wanted to know how participation in Family Focus impacted the results of these two outcome surveys.  First, I cleaned the data which individual participated in Family Focus (family focus CLEAN_public.R).  Then I joined this data set to both the yoq and fad datasets (shown below).  Next, I produced plots for both measures broken out by Family Focus status.
+The client wanted to know how participation in Family Workshop impacted the results of these two outcome surveys.  First, I cleaned the data which individual participated in Family Workshop (Family Workshop_clean_PUB.R).  Then I joined this data set to both the yoq and fad datasets (shown below).  Next, I produced plots for both measures broken out by Family Workshop status.
 
-```{r family focus merge}
+```{r family Workshop merge}
 
-# Import family focus (ff) data and master list of names of clients
-ff_clients <- readRDS("rds/family focus clients.rds")   # 276
+# Import family Workshop (ff) data and master list of names of clients
+ff_clients <- readRDS("rds/family workshop clients.rds")   # 276
 
 # JOIN TO FAD 
 fad <- left_join(fad, ff_clients, by = c("clientName", "otClientId"))
@@ -116,54 +116,54 @@ fad <- fad[!duplicated(fad[1:13]),]
 
 ```
 
-```{r fad by family focus plots}
+```{r fad by family Workshop plots}
 ## table for legend
 no.ff.tally <- fad %>% 
   group_by(surveyID, ff) %>% 
   filter(ff == "No") %>% 
   filter(instance == "DOA") %>% tally()
-# fad plot of no family focus clients
+# fad plot of no family Workshop clients
 no.ff <- fad %>% filter(ff == "No") %>% 
   ggplot(aes(color = surveyID)) + 
   stat_summary(aes(x=instance, y=fad), fun = mean, geom = "point") +
   stat_summary(aes(x=instance, y=fad, group = surveyID), fun = mean, geom = "line") +
   geom_abline(intercept = 2, slope = 0, linetype = "dashed") +
-  labs(title = "No Family Focus")+
+  labs(title = "No Family Workshop")+
   coord_cartesian(ylim = c(1.85,2.35))+
   scale_color_discrete(labels=paste(no.ff.tally$surveyID, no.ff.tally$n, sep = " = ")) +
   theme_minimal() + 
   theme(legend.position = c(1,1), legend.justification = c(1,1))
 
 
-# fad table with family focus
+# fad table with family Workshop
 yes.ff.tally <- fad %>% 
   group_by(surveyID, ff) %>% 
   filter(ff == "Yes") %>% 
   filter(instance == "DOA") %>% tally()
 
-# fad plot with family focus
+# fad plot with family Workshop
 yes.ff <- fad %>% filter(ff == "Yes") %>% 
   ggplot(aes(color = surveyID)) + 
   stat_summary(aes(x=instance, y=fad), fun = mean, geom = "point") +
   stat_summary(aes(x=instance, y=fad, group = surveyID), fun = mean, geom = "line") +
   geom_abline(intercept = 2, slope = 0, linetype = "dashed") +
-  labs(title = "With Family Focus")+
+  labs(title = "With Family Workshop")+
   coord_cartesian(ylim = c(1.85,2.35))+
   scale_color_discrete(labels=paste(yes.ff.tally$surveyID, yes.ff.tally$n, sep = " = ")) +
   theme_minimal() +
   theme(legend.position = c(1,1), legend.justification = c(1,1))
 
-# Family Assessment Device, family focus vs none plots, 
+# Family Assessment Device, family Workshop vs none plots, 
 ff.dif <- no.ff + yes.ff
 ff.dif
 
-ggsave("FAD_Outcomes/fig/fad_by_family_focus1.jpg", ff.dif, width = 10, height = 7)
+ggsave("FAD_Outcomes/fig/fad_by_family_Workshop1.jpg", ff.dif, width = 10, height = 7)
 
 
 ```
 
 
-```{r fad by family focus plots}
+```{r fad by family Workshop plots}
 # Check for statistical difference between ff and no ff
 fad_ttest <- fad %>% 
   group_by(instance, surveyID) %>% 
@@ -173,7 +173,7 @@ fad_ttest <- fad %>%
 
 ```
 
-Participation in a family focus was not shown to impact the scores of individuals at any time point in a statistically significant way.  
+Participation in a family Workshop was not shown to impact the scores of individuals at any time point in a statistically significant way.  
 
 
 

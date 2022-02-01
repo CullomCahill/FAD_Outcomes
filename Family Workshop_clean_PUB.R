@@ -1,15 +1,16 @@
-# Script to determine which clients engaged in a family focus experience
+# Script to determine which clients engaged in a family workshop experience
 
 ## DATA SETUP------
 library(tidyverse)
 
-ff <- read.csv("ETC/data/Family Focus list.csv")  # 392 obs
+
+ff <- read.csv("ETC/data/Family workshop list.csv")  # 392 obs
 # Remove duplicated ID numbers
 ff1 <- ff[!duplicated(ff[3]),]    # 317
 # Remove clients from Traverse program
 ff2 <- ff1 %>% filter(Memo != "Traverse")   
 ff3 <- select(ff2, clientName)  # 309
-# Add column to indicate client participated in family focus
+# Add column to indicate client participated in family workshop
 ff3$ff <- "Yes"
 
 
@@ -62,5 +63,5 @@ master_update <- rbind(master_ff, fixnames, by = "clientName")   # 276
 master_update <- filter(master_update, ff != "clientName")
 
 # Save
-saveRDS(master_update, "ETC/rds/family focus clients.rds")
-ff_clients <- readRDS("ETC/rds/family focus clients.rds")  # 276 obs
+saveRDS(master_update, "ETC/rds/family workshop clients.rds")
+ff_clients <- readRDS("ETC/rds/family workshop clients.rds")  # 276 obs
