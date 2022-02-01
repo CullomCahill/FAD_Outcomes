@@ -1,7 +1,7 @@
 # Family Assessment Device Analysis
-How did family functioning change as a result of treatment?  Did families who participated in a Family Focus see greater results?
+How did family functioning change as a result of treatment?  Did families who participated in a Family Workshop see greater results?
 
-![](fig/fad_by_family_focus1.jpg)
+![](fig/fad_by_family_Workshop1.jpg)
 
 It is very common for parents to choose to send their child to an Outdoor Behavioral Healthcare (OBH) program when their child’s struggles have resulted in poor family communication and overall functioning.  
 
@@ -26,15 +26,15 @@ Data had to be aggregated and cleaned from several several different sources for
 * In order to perform analysis, raw FAD data had to be cleaned (see [**FAD clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/FAD%20clean_PUB.R)).  
 * The consent files had to be merged together and joined to the overall FAD dataset and the non-consenting cases removed (see [**Consent clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Consent_clean_PUB.R)).  
 * Due to the limited number of complete cases with data at each of the four timepoints, missing cases were predicted using imputation via linear regression for cases that had data available for both intake and discharge as well as either six months or one year post-discharge (see [**Imputation_FAD_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Imputation_FAD_PUB.R)).
-* Family Workshop data had to be gathered and cleaned (see [**Family Focus_clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Family%20Focus_clean_PUB.R))
+* Family Workshop data had to be gathered and cleaned (see [**Family Workshop_clean_PUB.R**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/Family%20Workshop_clean_PUB.R))
 
 ## 4. Results
 
-Detailed results in [**FAD and Family Focus_PUB.Rmd**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/FAD%20and%20Family%20Focus_PUB.Rmd)
+Detailed results in [**FAD and Family Workshop_PUB.Rmd**](https://github.com/CullomCahill/FAD_Outcomes/blob/main/FAD%20and%20Family%20Workshop_PUB.Rmd)
 
 ![](fig/fad_overall_plot.jpg)  
 
 <br>  
 <br>  
 
-![](fig/fad_by_family_focus1.jpg)
+![](fig/fad_by_family_Workshop1.jpg)
